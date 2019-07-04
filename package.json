@@ -1,6 +1,6 @@
 {
   "name": "towpath",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "wrap a state with proxies that allow accessing value's paths",
   "main": "index.js",
   "scripts": {

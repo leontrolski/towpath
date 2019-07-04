@@ -8,11 +8,16 @@ function isPlainObject(o) {
     if (!o.constructor.prototype.hasOwnProperty('isPrototypeOf')) return false
     return true;
 }
+function mapObj(obj, f){
+    return Object.entries(obj)
+        .map(([k, v])=>({[k]: f(k, v)}))
+        .reduce((a, b)=>({...a, ...b}), {})
+}
 
 const _pathSymbol = Symbol('path')
 const _valueSymbol = Symbol('value')
 
-export default function addPaths(value, path=[]){
+export function addPaths(value, path=[]){
     const handler = {
         get: (v, k)=>{
             if (k === _pathSymbol) return v.path
@@ -25,18 +30,19 @@ export default function addPaths(value, path=[]){
         getPrototypeOf: (v)=>v.value.__proto__,
     }
     if (Array.isArray(value)) value = value.map((v, i)=>addPaths(v, [...path, i]))
-    if (isPlainObject(value)) value = Object.entries(value)
-        .map(([k, v])=>({[k]: addPaths(v, [...path, k])}))
-        .reduce((a, b)=>({...a, ...b}), {})
+    if (isPlainObject(value)) value = mapObj(value, (k, v)=>addPaths(v, [...path, k]))
     return new Proxy({value, path}, handler)
 }
-export default function path(proxy){
+export function path(proxy){
     return proxy[_pathSymbol]
 }
-export default function value(proxy){
-    return proxy[_valueSymbol]
+export function value(proxy){
+    const value_ = proxy[_valueSymbol]
+    if (Array.isArray(value_)) return value_.map(value)
+    if (isPlainObject(value_)) return mapObj(value_, (k, v)=>value(v))
+    return value_
 }
-export default function set(obj, proxy, newValue){
+export function set(obj, proxy, newValue){
     const path_ = path(proxy).slice(0, -1)
     const finalK = path(proxy).slice(-1)
     path_.reduce((a, b)=>a[b], obj)[finalK] = newValue
