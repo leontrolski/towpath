@@ -1,0 +1,19 @@
+{
+  "name": "towpath",
+  "version": "0.0.1",
+  "description": "wrap a state with proxies that allow accessing value's paths",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leontrolski/towpath.git"
+  },
+  "author": "ojhrussell@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leontrolski/towpath/issues"
+  },
+  "homepage": "https://github.com/leontrolski/towpath#readme"
+}
